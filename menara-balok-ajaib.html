@@ -1,0 +1,1410 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Menara Balok Ajaib - Game Edukasi PAUD</title>
+  <style>
+    /* Reset & Base Fonts */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    body {
+      font-family: 'Fredoka', 'Quicksand', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #FEF3C7 0%, #FDE68A 50%, #FBCFE8 100%);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      color: #1F2937;
+      overflow-x: hidden;
+      touch-action: manipulation;
+    }
+
+    /* Top Bar */
+    header {
+      background: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(8px);
+      padding: 10px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 3px solid #FCD34D;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+      position: sticky;
+      top: 0;
+      z-index: 20;
+    }
+
+    .title-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .logo-icon {
+      width: 38px;
+      height: 38px;
+      background: #F59E0B;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 3px 0 #D97706;
+      color: white;
+      font-size: 20px;
+    }
+
+    h1 {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: #92400E;
+      margin: 0;
+    }
+
+    .subtitle {
+      font-size: 0.72rem;
+      color: #B45309;
+      font-weight: 600;
+    }
+
+    .top-controls {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .level-badge {
+      background: #EFF6FF;
+      border: 2px solid #93C5FD;
+      padding: 4px 12px;
+      border-radius: 999px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: #1D4ED8;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .icon-btn {
+      background: white;
+      border: 2px solid #E5E7EB;
+      border-radius: 50%;
+      width: 38px;
+      height: 38px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      cursor: pointer;
+      box-shadow: 0 2px 0 #D1D5DB;
+      transition: transform 0.1s, box-shadow 0.1s;
+    }
+
+    .icon-btn:active {
+      transform: translateY(2px);
+      box-shadow: 0 0 0 #D1D5DB;
+    }
+
+    /* Main Container */
+    main {
+      flex: 1;
+      max-width: 900px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 12px 14px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    /* Guide text */
+    .instruction-banner {
+      background: #FFFFFF;
+      border-radius: 16px;
+      padding: 8px 16px;
+      text-align: center;
+      box-shadow: 0 3px 0 #F3F4F6;
+      border: 2px solid #FEF08A;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      font-size: 0.92rem;
+      font-weight: 600;
+      color: #78350F;
+    }
+
+    .instruction-banner .pulse-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #10B981;
+      animation: pulse 1.5s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.4); opacity: 0.6; }
+    }
+
+    /* Columns Area */
+    .game-board {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      flex: 1;
+      min-height: 280px;
+    }
+
+    .column-card {
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(4px);
+      border-radius: 20px;
+      border: 3px solid #E5E7EB;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      box-shadow: 0 6px 12px -2px rgba(0, 0, 0, 0.05);
+    }
+
+    .column-header {
+      padding: 8px 12px;
+      text-align: center;
+      font-weight: 700;
+      font-size: 0.95rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    .col-left-header {
+      background: #FEF3C7;
+      color: #92400E;
+      border-bottom: 2px solid #FDE68A;
+    }
+
+    .col-right-header {
+      background: #DCFCE7;
+      color: #166534;
+      border-bottom: 2px solid #BBF7D0;
+    }
+
+    .column-body {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      align-items: center;
+      padding: 16px 8px 12px;
+      position: relative;
+    }
+
+    /* Pedestal Base */
+    .pedestal-base {
+      width: 86%;
+      height: 16px;
+      background: linear-gradient(180deg, #D97706 0%, #B45309 100%);
+      border-radius: 8px 8px 4px 4px;
+      box-shadow: 0 4px 0 #78350F;
+      position: relative;
+      margin-top: 4px;
+    }
+
+    .pedestal-base::after {
+      content: '';
+      position: absolute;
+      top: 2px;
+      left: 10%;
+      right: 10%;
+      height: 3px;
+      background: rgba(255, 255, 255, 0.35);
+      border-radius: 2px;
+    }
+
+    /* Towers Container */
+    .tower-stack {
+      width: 100%;
+      display: flex;
+      flex-direction: column-reverse; /* Bottom is first element in DOM! */
+      align-items: center;
+      gap: 6px;
+      padding-bottom: 2px;
+      min-height: 220px;
+      justify-content: flex-start;
+    }
+
+    /* Block Items in Tower */
+    .tower-slot {
+      width: 68px;
+      height: 68px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      transition: all 0.2s ease;
+    }
+
+    @media (min-width: 600px) {
+      .tower-slot {
+        width: 78px;
+        height: 78px;
+      }
+    }
+
+    .target-guide {
+      position: absolute;
+      right: -36px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: #F59E0B;
+      color: white;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 6px;
+      border-radius: 6px;
+      white-space: nowrap;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+      animation: floatGuide 1.5s ease-in-out infinite;
+      display: flex;
+      align-items: center;
+      gap: 2px;
+      z-index: 10;
+    }
+
+    .target-guide::before {
+      content: '';
+      position: absolute;
+      left: -6px;
+      top: 50%;
+      transform: translateY(-50%);
+      border-width: 5px 6px 5px 0;
+      border-style: solid;
+      border-color: transparent #F59E0B transparent transparent;
+    }
+
+    @keyframes floatGuide {
+      0%, 100% { transform: translateY(-50%) translateX(0); }
+      50% { transform: translateY(-50%) translateX(-4px); }
+    }
+
+    .empty-slot {
+      border: 3px dashed #CBD5E1;
+      border-radius: 16px;
+      background: rgba(241, 245, 249, 0.4);
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #94A3B8;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .active-target-slot {
+      border: 3px dashed #F59E0B;
+      background: #FFFBEB;
+      animation: slotPulse 1.6s infinite;
+    }
+
+    @keyframes slotPulse {
+      0%, 100% { transform: scale(1); border-color: #F59E0B; }
+      50% { transform: scale(1.05); border-color: #D97706; }
+    }
+
+    /* Drop & Bounce Animation */
+    .bounce-in {
+      animation: dropBounce 0.48s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+    }
+
+    @keyframes dropBounce {
+      0% {
+        transform: translateY(-90px) scale(0.85);
+        opacity: 0;
+      }
+      50% {
+        transform: translateY(0) scaleX(1.15) scaleY(0.85);
+        opacity: 1;
+      }
+      75% {
+        transform: translateY(-12px) scaleX(0.95) scaleY(1.05);
+      }
+      100% {
+        transform: translateY(0) scale(1);
+        opacity: 1;
+      }
+    }
+
+    /* Block Buttons Area (Bottom) */
+    .buttons-section {
+      background: white;
+      border-radius: 24px;
+      padding: 12px;
+      box-shadow: 0 8px 16px -4px rgba(0, 0, 0, 0.08);
+      border: 3px solid #FEF08A;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .buttons-title {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: #6B7280;
+      text-align: center;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .choice-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+    }
+
+    @media (max-width: 480px) {
+      .choice-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
+      }
+    }
+
+    .choice-btn {
+      min-height: 86px;
+      background: #F9FAFB;
+      border: 3px solid #E5E7EB;
+      border-bottom: 6px solid #D1D5DB;
+      border-radius: 18px;
+      padding: 8px 6px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      cursor: pointer;
+      touch-action: manipulation;
+      transition: transform 0.1s ease, border-bottom 0.1s ease, background 0.15s;
+    }
+
+    .choice-btn:hover {
+      background: #F3F4F6;
+    }
+
+    .choice-btn:active {
+      transform: translateY(4px);
+      border-bottom-width: 2px;
+    }
+
+    .choice-btn .btn-svg {
+      width: 48px;
+      height: 48px;
+      pointer-events: none;
+    }
+
+    .choice-btn .btn-label {
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: #374151;
+      pointer-events: none;
+      text-align: center;
+      line-height: 1.1;
+    }
+
+    /* Wrong Shake */
+    .shake-animation {
+      animation: shakeWobble 0.4s ease-in-out;
+      border-color: #F87171 !important;
+      border-bottom-color: #EF4444 !important;
+      background: #FEF2F2 !important;
+    }
+
+    @keyframes shakeWobble {
+      0%, 100% { transform: translateX(0) rotate(0deg); }
+      20% { transform: translateX(-10px) rotate(-4deg); }
+      40% { transform: translateX(10px) rotate(4deg); }
+      60% { transform: translateX(-6px) rotate(-2deg); }
+      80% { transform: translateX(6px) rotate(2deg); }
+    }
+
+    /* Level Complete Banner */
+    .celebration-toast {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(0.9);
+      background: rgba(255, 255, 255, 0.98);
+      border: 4px solid #10B981;
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2), 0 0 40px rgba(16, 185, 129, 0.3);
+      border-radius: 28px;
+      padding: 24px 32px;
+      text-align: center;
+      z-index: 50;
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .celebration-toast.show {
+      opacity: 1;
+      transform: translate(-50%, -50%) scale(1);
+    }
+
+    .celebration-toast h2 {
+      font-size: 1.6rem;
+      color: #065F46;
+      margin-bottom: 6px;
+    }
+
+    .celebration-toast p {
+      font-size: 1rem;
+      color: #047857;
+      font-weight: 600;
+    }
+
+    /* Modal Victory (Game Over) */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(6px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      z-index: 100;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+
+    .modal-overlay.show {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .modal-card {
+      background: white;
+      border-radius: 32px;
+      border: 5px solid #F59E0B;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+      max-width: 440px;
+      width: 100%;
+      padding: 28px 20px;
+      text-align: center;
+      position: relative;
+      transform: scale(0.9);
+      transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .modal-overlay.show .modal-card {
+      transform: scale(1);
+    }
+
+    .trophy-svg {
+      width: 90px;
+      height: 90px;
+      margin: 0 auto 12px;
+      animation: floatTrophy 2.5s ease-in-out infinite;
+    }
+
+    @keyframes floatTrophy {
+      0%, 100% { transform: translateY(0) rotate(0deg); }
+      50% { transform: translateY(-8px) rotate(2deg); }
+    }
+
+    .modal-title {
+      font-size: 1.6rem;
+      font-weight: 800;
+      color: #B45309;
+      margin-bottom: 6px;
+    }
+
+    .modal-desc {
+      font-size: 1rem;
+      color: #4B5563;
+      margin-bottom: 20px;
+      line-height: 1.4;
+    }
+
+    .stars-row {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      margin-bottom: 20px;
+    }
+
+    .gold-star {
+      width: 44px;
+      height: 44px;
+      color: #F59E0B;
+      filter: drop-shadow(0 4px 6px rgba(245, 158, 11, 0.3));
+    }
+
+    .replay-btn {
+      width: 100%;
+      background: #10B981;
+      color: white;
+      font-size: 1.15rem;
+      font-weight: 700;
+      padding: 14px 24px;
+      border-radius: 18px;
+      border: none;
+      border-bottom: 5px solid #059669;
+      box-shadow: 0 6px 12px rgba(16, 185, 129, 0.3);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      transition: transform 0.1s, border-bottom-width 0.1s;
+    }
+
+    .replay-btn:active {
+      transform: translateY(3px);
+      border-bottom-width: 2px;
+    }
+
+    /* Floating Particles Canvas */
+    #celebration-canvas {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 40;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="celebration-canvas"></canvas>
+
+  <!-- Top Bar -->
+  <header>
+    <div class="title-group">
+      <div class="logo-icon">🏰</div>
+      <div>
+        <h1>Menara Balok Ajaib</h1>
+        <div class="subtitle">Game Edukasi PAUD 5 Tahun</div>
+      </div>
+    </div>
+
+    <div class="top-controls">
+      <div class="level-badge" id="level-indicator">
+        <span>Level</span>
+        <strong id="current-level-num">1</strong>/3
+      </div>
+      <button class="icon-btn" id="sound-btn" title="Suara On/Off" aria-label="Toggle Sound">🔊</button>
+      <button class="icon-btn" id="reset-btn" title="Ulangi Level Ini" aria-label="Reset Level">🔄</button>
+    </div>
+  </header>
+
+  <!-- Main Game Area -->
+  <main>
+    <div class="instruction-banner">
+      <div class="pulse-dot"></div>
+      <span id="instruction-text">Lihat contoh di kiri, pasang balok dari <b>PALING BAWAH</b> ke atas!</span>
+    </div>
+
+    <div class="game-board">
+      <!-- Kolom Kiri: Contoh Menara -->
+      <section class="column-card" aria-label="Contoh Menara">
+        <div class="column-header col-left-header">
+          <span>🎯</span> Contoh Menara
+        </div>
+        <div class="column-body">
+          <div class="tower-stack" id="target-tower">
+            <!-- Balok contoh akan dimasukkan via JavaScript -->
+          </div>
+          <div class="pedestal-base"></div>
+        </div>
+      </section>
+
+      <!-- Kolom Kanan: Menaramu -->
+      <section class="column-card" aria-label="Menaramu">
+        <div class="column-header col-right-header">
+          <span>🏗️</span> Menaramu
+        </div>
+        <div class="column-body">
+          <div class="tower-stack" id="player-tower">
+            <!-- Balok pemain akan dimasukkan saat klik tombol benar -->
+          </div>
+          <div class="pedestal-base"></div>
+        </div>
+      </section>
+    </div>
+
+    <!-- Pilihan Balok di Bawah -->
+    <section class="buttons-section">
+      <div class="buttons-title">Pilih Balok Yang Sesuai (Ketuk Balok):</div>
+      <div class="choice-grid" id="choices-container">
+        <!-- 4 Tombol Balok Pilihan (Persegi Merah, Lingkaran Kuning, Segitiga Biru, Bintang Hijau) -->
+      </div>
+    </section>
+  </main>
+
+  <!-- Level Complete Toast -->
+  <div class="celebration-toast" id="level-toast">
+    <div style="font-size: 40px; margin-bottom: 4px;">🌟 👏 🌟</div>
+    <h2 id="toast-title">Hebat Sekali!</h2>
+    <p id="toast-desc">Menara tingkat ini selesai dengan sempurna!</p>
+  </div>
+
+  <!-- Victory Modal Akhir Level 3 -->
+  <div class="modal-overlay" id="victory-modal">
+    <div class="modal-card">
+      <svg class="trophy-svg" viewBox="0 0 24 24" fill="none" stroke="#F59E0B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"></path>
+        <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"></path>
+        <path d="M4 22h16"></path>
+        <path d="M10 14.66V17c0 .55-.45 1-1 1H7v4h10v-4h-2c-.55 0-1-.45-1-1v-2.34"></path>
+        <path d="M6 4h12v7a6 6 0 0 1-12 0V4z" fill="#FEF3C7"></path>
+      </svg>
+      <h2 class="modal-title">Hore! Menaramu Selesai!</h2>
+      <p class="modal-desc">Kamu hebat sekali! Semua 3 level menara balok ajaib berhasil disusun dari bawah sampai puncak!</p>
+      
+      <div class="stars-row">
+        <svg class="gold-star" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        <svg class="gold-star" style="transform: scale(1.2);" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        <svg class="gold-star" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+      </div>
+
+      <button class="replay-btn" id="modal-replay-btn">
+        <span>🎮</span> Main Lagi
+      </button>
+    </div>
+  </div>
+
+  <script>
+    /* ==========================================================================
+       DATA BALOK & LEVEL GAME (Sesuai Spesifikasi PAUD 5 Tahun)
+       ========================================================================== */
+    const BLOCK_DEFS = {
+      'square-red': {
+        id: 'square-red',
+        name: 'Persegi Merah',
+        shortName: 'Persegi',
+        colorName: 'Merah',
+        colorHex: '#EF4444',
+        svg: `
+          <svg viewBox="0 0 100 100" class="block-svg" style="width:100%;height:100%;">
+            <defs>
+              <linearGradient id="grad-red" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#F87171" />
+                <stop offset="60%" stop-color="#EF4444" />
+                <stop offset="100%" stop-color="#DC2626" />
+              </linearGradient>
+              <filter id="shadow-red" x="-10%" y="-10%" width="120%" height="130%">
+                <feDropShadow dx="0" dy="3" stdDeviation="2" flood-color="#7F1D1D" flood-opacity="0.35"/>
+              </filter>
+            </defs>
+            <rect x="10" y="10" width="80" height="80" rx="16" fill="url(#grad-red)" stroke="#B91C1C" stroke-width="4" filter="url(#shadow-red)"/>
+            <!-- Bevel Highlight -->
+            <rect x="15" y="15" width="70" height="14" rx="7" fill="white" opacity="0.35" />
+            <!-- Cute Face for 5-Year Olds -->
+            <circle cx="36" cy="48" r="4.5" fill="#450A0A" />
+            <circle cx="64" cy="48" r="4.5" fill="#450A0A" />
+            <circle cx="34.5" cy="46.5" r="1.5" fill="white" />
+            <circle cx="62.5" cy="46.5" r="1.5" fill="white" />
+            <!-- Rosy Cheeks -->
+            <circle cx="28" cy="54" r="5" fill="#FECDD3" opacity="0.75" />
+            <circle cx="72" cy="54" r="5" fill="#FECDD3" opacity="0.75" />
+            <!-- Smile -->
+            <path d="M 40 58 Q 50 67 60 58" fill="none" stroke="#450A0A" stroke-width="3" stroke-linecap="round" />
+          </svg>
+        `
+      },
+      'circle-yellow': {
+        id: 'circle-yellow',
+        name: 'Lingkaran Kuning',
+        shortName: 'Lingkaran',
+        colorName: 'Kuning',
+        colorHex: '#F59E0B',
+        svg: `
+          <svg viewBox="0 0 100 100" class="block-svg" style="width:100%;height:100%;">
+            <defs>
+              <linearGradient id="grad-yellow" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#FDE68A" />
+                <stop offset="50%" stop-color="#FBBF24" />
+                <stop offset="100%" stop-color="#F59E0B" />
+              </linearGradient>
+              <filter id="shadow-yellow" x="-10%" y="-10%" width="120%" height="130%">
+                <feDropShadow dx="0" dy="3" stdDeviation="2" flood-color="#78350F" flood-opacity="0.3"/>
+              </filter>
+            </defs>
+            <circle cx="50" cy="50" r="42" fill="url(#grad-yellow)" stroke="#D97706" stroke-width="4" filter="url(#shadow-yellow)"/>
+            <!-- Highlight Gloss -->
+            <ellipse cx="40" cy="24" rx="20" ry="8" fill="white" opacity="0.45" />
+            <!-- Cute Face -->
+            <circle cx="38" cy="48" r="4.5" fill="#78350F" />
+            <circle cx="62" cy="48" r="4.5" fill="#78350F" />
+            <circle cx="36.5" cy="46.5" r="1.5" fill="white" />
+            <circle cx="60.5" cy="46.5" r="1.5" fill="white" />
+            <!-- Rosy Cheeks -->
+            <circle cx="30" cy="55" r="4.5" fill="#FCA5A5" opacity="0.75" />
+            <circle cx="70" cy="55" r="4.5" fill="#FCA5A5" opacity="0.75" />
+            <!-- Smile -->
+            <path d="M 42 57 Q 50 66 58 57" fill="none" stroke="#78350F" stroke-width="3" stroke-linecap="round" />
+          </svg>
+        `
+      },
+      'triangle-blue': {
+        id: 'triangle-blue',
+        name: 'Segitiga Biru',
+        shortName: 'Segitiga',
+        colorName: 'Biru',
+        colorHex: '#3B82F6',
+        svg: `
+          <svg viewBox="0 0 100 100" class="block-svg" style="width:100%;height:100%;">
+            <defs>
+              <linearGradient id="grad-blue" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#93C5FD" />
+                <stop offset="50%" stop-color="#3B82F6" />
+                <stop offset="100%" stop-color="#2563EB" />
+              </linearGradient>
+              <filter id="shadow-blue" x="-10%" y="-10%" width="120%" height="130%">
+                <feDropShadow dx="0" dy="3" stdDeviation="2" flood-color="#1E3A8A" flood-opacity="0.35"/>
+              </filter>
+            </defs>
+            <path d="M 50 14 Q 54 8 58 14 L 88 74 Q 92 82 82 82 L 18 82 Q 8 82 12 74 Z" 
+                  fill="url(#grad-blue)" stroke="#1D4ED8" stroke-width="4" stroke-linejoin="round" filter="url(#shadow-blue)"/>
+            <!-- Triangle Gloss -->
+            <path d="M 50 20 L 76 72" stroke="white" stroke-width="4" stroke-linecap="round" opacity="0.35"/>
+            <!-- Cute Face -->
+            <circle cx="43" cy="54" r="4.5" fill="#172554" />
+            <circle cx="57" cy="54" r="4.5" fill="#172554" />
+            <circle cx="41.5" cy="52.5" r="1.5" fill="white" />
+            <circle cx="55.5" cy="52.5" r="1.5" fill="white" />
+            <!-- Smile -->
+            <path d="M 45 62 Q 50 68 55 62" fill="none" stroke="#172554" stroke-width="3" stroke-linecap="round" />
+          </svg>
+        `
+      },
+      'star-green': {
+        id: 'star-green',
+        name: 'Bintang Hijau',
+        shortName: 'Bintang',
+        colorName: 'Hijau',
+        colorHex: '#10B981',
+        svg: `
+          <svg viewBox="0 0 100 100" class="block-svg" style="width:100%;height:100%;">
+            <defs>
+              <linearGradient id="grad-green" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#A7F3D0" />
+                <stop offset="50%" stop-color="#10B981" />
+                <stop offset="100%" stop-color="#059669" />
+              </linearGradient>
+              <filter id="shadow-green" x="-10%" y="-10%" width="120%" height="130%">
+                <feDropShadow dx="0" dy="3" stdDeviation="2" flood-color="#064E3B" flood-opacity="0.35"/>
+              </filter>
+            </defs>
+            <path d="M 50 10 L 61 34 L 87 36 L 67 54 L 73 80 L 50 67 L 27 80 L 33 54 L 13 36 L 39 34 Z"
+                  fill="url(#grad-green)" stroke="#047857" stroke-width="4" stroke-linejoin="round" filter="url(#shadow-green)" />
+            <!-- Highlight -->
+            <circle cx="50" cy="24" r="5" fill="white" opacity="0.45" />
+            <!-- Cute Face -->
+            <circle cx="43" cy="46" r="4.5" fill="#064E3B" />
+            <circle cx="57" cy="46" r="4.5" fill="#064E3B" />
+            <circle cx="41.5" cy="44.5" r="1.5" fill="white" />
+            <circle cx="55.5" cy="44.5" r="1.5" fill="white" />
+            <!-- Smile -->
+            <path d="M 44 54 Q 50 60 56 54" fill="none" stroke="#064E3B" stroke-width="3" stroke-linecap="round" />
+          </svg>
+        `
+      }
+    };
+
+    /* Urutan Level Spesifikasi User:
+       - Level 1 (3 Balok): [Bawah: Persegi Merah] - [Tengah: Lingkaran Kuning] - [Atas: Persegi Merah]
+       - Level 2 (4 Balok): [Bawah: Segitiga Biru] - [Persegi Merah] - [Persegi Merah] - [Atas: Segitiga Biru]
+       - Level 3 (4 Balok - ABC): [Bawah: Persegi Merah] - [Lingkaran Kuning] - [Bintang Hijau] - [Atas: Persegi Merah]
+       NOTE: Array index 0 adalah BALOK PALING BAWAH, index terakhir adalah BALOK PALING ATAS.
+    */
+    const LEVELS = [
+      {
+        level: 1,
+        title: "Level 1: Menara 3 Balok",
+        sequence: ['square-red', 'circle-yellow', 'square-red']
+      },
+      {
+        level: 2,
+        title: "Level 2: Menara 4 Balok",
+        sequence: ['triangle-blue', 'square-red', 'square-red', 'triangle-blue']
+      },
+      {
+        level: 3,
+        title: "Level 3: Menara 4 Balok ABC",
+        sequence: ['square-red', 'circle-yellow', 'star-green', 'square-red']
+      }
+    ];
+
+    /* ==========================================================================
+       SYNTHETIC WEB AUDIO API (Nada Renyah & Nada Lembut)
+       ========================================================================== */
+    class SoundEngine {
+      constructor() {
+        this.ctx = null;
+        this.soundEnabled = true;
+      }
+
+      initContext() {
+        if (!this.ctx) {
+          const AudioContext = window.AudioContext || window.webkitAudioContext;
+          if (AudioContext) {
+            this.ctx = new AudioContext();
+          }
+        }
+        if (this.ctx && this.ctx.state === 'suspended') {
+          this.ctx.resume();
+        }
+      }
+
+      playCorrect(stepIndex) {
+        if (!this.soundEnabled) return;
+        this.initContext();
+        if (!this.ctx) return;
+
+        // Nada pentatonik naik ceria yang renyah (C5, E5, G5, C6)
+        const freqs = [523.25, 659.25, 783.99, 1046.50, 1318.5];
+        const baseFreq = freqs[Math.min(stepIndex, freqs.length - 1)];
+
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+
+        // Dual harmonic shimmer (bell-like toy chime)
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(baseFreq, now);
+
+        // Fast bell attack & cheerful decay
+        gain.gain.setValueAtTime(0.001, now);
+        gain.gain.exponentialRampToValueAtTime(0.4, now + 0.02);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
+
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+
+        osc.start(now);
+        osc.stop(now + 0.36);
+
+        // Overtone sparkle
+        const osc2 = this.ctx.createOscillator();
+        const gain2 = this.ctx.createGain();
+        osc2.type = 'sine';
+        osc2.frequency.setValueAtTime(baseFreq * 2, now);
+        gain2.gain.setValueAtTime(0.001, now);
+        gain2.gain.exponentialRampToValueAtTime(0.2, now + 0.02);
+        gain2.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
+        osc2.connect(gain2);
+        gain2.connect(this.ctx.destination);
+        osc2.start(now);
+        osc2.stop(now + 0.26);
+      }
+
+      playWrong() {
+        if (!this.soundEnabled) return;
+        this.initContext();
+        if (!this.ctx) return;
+
+        // Nada rendah lembut "boing / uh-oh" yang bersahabat (tidak menakuti anak)
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(175, now);
+        osc.frequency.exponentialRampToValueAtTime(110, now + 0.28);
+
+        gain.gain.setValueAtTime(0.01, now);
+        gain.gain.linearRampToValueAtTime(0.25, now + 0.04);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.3);
+
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+
+        osc.start(now);
+        osc.stop(now + 0.31);
+      }
+
+      playLevelComplete() {
+        if (!this.soundEnabled) return;
+        this.initContext();
+        if (!this.ctx) return;
+
+        // Jingle ceria arpeggio 4 nada cepat (C5, E5, G5, C6)
+        const notes = [523.25, 659.25, 783.99, 1046.50];
+        const now = this.ctx.currentTime;
+
+        notes.forEach((freq, idx) => {
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          const startTime = now + idx * 0.12;
+
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(freq, startTime);
+
+          gain.gain.setValueAtTime(0.01, startTime);
+          gain.gain.linearRampToValueAtTime(0.35, startTime + 0.02);
+          gain.gain.exponentialRampToValueAtTime(0.001, startTime + 0.3);
+
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+
+          osc.start(startTime);
+          osc.stop(startTime + 0.32);
+        });
+      }
+
+      playGameVictory() {
+        if (!this.soundEnabled) return;
+        this.initContext();
+        if (!this.ctx) return;
+
+        const melody = [
+          { f: 523.25, d: 0.14 },
+          { f: 659.25, d: 0.14 },
+          { f: 783.99, d: 0.14 },
+          { f: 1046.50, d: 0.35 },
+          { f: 880.00, d: 0.14 },
+          { f: 1046.50, d: 0.5 }
+        ];
+
+        let timeOffset = this.ctx.currentTime;
+        melody.forEach(item => {
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(item.f, timeOffset);
+
+          gain.gain.setValueAtTime(0.01, timeOffset);
+          gain.gain.linearRampToValueAtTime(0.38, timeOffset + 0.02);
+          gain.gain.exponentialRampToValueAtTime(0.001, timeOffset + item.d);
+
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+
+          osc.start(timeOffset);
+          osc.stop(timeOffset + item.d + 0.02);
+          timeOffset += item.d + 0.05;
+        });
+      }
+    }
+
+    const sound = new SoundEngine();
+
+    /* ==========================================================================
+       PARTICLE / STAR CELEBRATION ENGINE
+       ========================================================================== */
+    class CelebrationCanvas {
+      constructor(canvasId) {
+        this.canvas = document.getElementById(canvasId);
+        this.ctx = this.canvas.getContext('2d');
+        this.particles = [];
+        this.animating = false;
+        this.resize();
+        window.addEventListener('resize', () => this.resize());
+      }
+
+      resize() {
+        this.canvas.width = window.innerWidth;
+        this.canvas.height = window.innerHeight;
+      }
+
+      burstStars(x, y, count = 25) {
+        const colors = ['#F59E0B', '#EF4444', '#10B981', '#3B82F6', '#EC4899', '#8B5CF6'];
+        for (let i = 0; i < count; i++) {
+          const angle = Math.random() * Math.PI * 2;
+          const speed = 3 + Math.random() * 6;
+          this.particles.push({
+            x: x || window.innerWidth / 2,
+            y: y || window.innerHeight / 2,
+            vx: Math.cos(angle) * speed,
+            vy: Math.sin(angle) * speed - 3,
+            size: 8 + Math.random() * 12,
+            color: colors[Math.floor(Math.random() * colors.length)],
+            rotation: Math.random() * Math.PI * 2,
+            vRot: (Math.random() - 0.5) * 0.2,
+            alpha: 1,
+            decay: 0.012 + Math.random() * 0.015,
+            isStar: Math.random() > 0.3
+          });
+        }
+        if (!this.animating) {
+          this.animating = true;
+          this.render();
+        }
+      }
+
+      render() {
+        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+
+        for (let i = this.particles.length - 1; i >= 0; i--) {
+          const p = this.particles[i];
+          p.x += p.vx;
+          p.y += p.vy;
+          p.vy += 0.15; // gravity
+          p.rotation += p.vRot;
+          p.alpha -= p.decay;
+
+          if (p.alpha <= 0) {
+            this.particles.splice(i, 1);
+            continue;
+          }
+
+          this.ctx.save();
+          this.ctx.globalAlpha = Math.max(0, p.alpha);
+          this.ctx.translate(p.x, p.y);
+          this.ctx.rotate(p.rotation);
+          this.ctx.fillStyle = p.color;
+
+          if (p.isStar) {
+            // Draw 5-pointed star
+            this.drawStar(0, 0, 5, p.size, p.size / 2);
+          } else {
+            // Draw confetti rectangle
+            this.ctx.fillRect(-p.size / 2, -p.size / 3, p.size, p.size * 0.7);
+          }
+
+          this.ctx.restore();
+        }
+
+        if (this.particles.length > 0) {
+          requestAnimationFrame(() => this.render());
+        } else {
+          this.animating = false;
+        }
+      }
+
+      drawStar(cx, cy, spikes, outerRadius, innerRadius) {
+        let rot = Math.PI / 2 * 3;
+        let step = Math.PI / spikes;
+
+        this.ctx.beginPath();
+        this.ctx.moveTo(cx, cy - outerRadius);
+        for (let i = 0; i < spikes; i++) {
+          let x = cx + Math.cos(rot) * outerRadius;
+          let y = cy + Math.sin(rot) * outerRadius;
+          this.ctx.lineTo(x, y);
+          rot += step;
+
+          x = cx + Math.cos(rot) * innerRadius;
+          y = cy + Math.sin(rot) * innerRadius;
+          this.ctx.lineTo(x, y);
+          rot += step;
+        }
+        this.ctx.lineTo(cx, cy - outerRadius);
+        this.ctx.closePath();
+        this.ctx.fill();
+      }
+    }
+
+    const confetti = new CelebrationCanvas('celebration-canvas');
+
+    /* ==========================================================================
+       STATE GAME & CONTROLLER
+       ========================================================================== */
+    class TowerGame {
+      constructor() {
+        this.currentLevelIndex = 0;
+        this.playerPlaced = []; // balok yang sudah ditaruh pemain (dari bawah ke atas)
+        this.isLevelTransitioning = false;
+
+        // DOM elements
+        this.targetTowerEl = document.getElementById('target-tower');
+        this.playerTowerEl = document.getElementById('player-tower');
+        this.choicesContainerEl = document.getElementById('choices-container');
+        this.levelNumEl = document.getElementById('current-level-num');
+        this.instructionTextEl = document.getElementById('instruction-text');
+        this.soundBtnEl = document.getElementById('sound-btn');
+        this.resetBtnEl = document.getElementById('reset-btn');
+        this.levelToastEl = document.getElementById('level-toast');
+        this.victoryModalEl = document.getElementById('victory-modal');
+        this.modalReplayBtn = document.getElementById('modal-replay-btn');
+
+        this.init();
+      }
+
+      init() {
+        this.renderChoiceButtons();
+        this.setupEventListeners();
+        this.loadLevel(0);
+      }
+
+      setupEventListeners() {
+        // Sound toggle
+        this.soundBtnEl.addEventListener('click', () => {
+          sound.initContext();
+          sound.soundEnabled = !sound.soundEnabled;
+          this.soundBtnEl.textContent = sound.soundEnabled ? '🔊' : '🔇';
+          this.soundBtnEl.style.opacity = sound.soundEnabled ? '1' : '0.6';
+        });
+
+        // Reset level button
+        this.resetBtnEl.addEventListener('click', () => {
+          sound.initContext();
+          this.resetCurrentLevel();
+        });
+
+        // Replay game button
+        this.modalReplayBtn.addEventListener('click', () => {
+          sound.initContext();
+          this.victoryModalEl.classList.remove('show');
+          this.loadLevel(0);
+        });
+
+        // Unlock audio context on initial touch/click anywhere
+        const unlockAudio = () => {
+          sound.initContext();
+          window.removeEventListener('pointerdown', unlockAudio);
+        };
+        window.addEventListener('pointerdown', unlockAudio);
+      }
+
+      renderChoiceButtons() {
+        this.choicesContainerEl.innerHTML = '';
+        const blockKeys = Object.keys(BLOCK_DEFS);
+
+        blockKeys.forEach(key => {
+          const def = BLOCK_DEFS[key];
+          const btn = document.createElement('button');
+          btn.className = 'choice-btn';
+          btn.id = `btn-${def.id}`;
+          btn.setAttribute('aria-label', def.name);
+          btn.setAttribute('data-block-id', def.id);
+
+          btn.innerHTML = `
+            <div class="btn-svg">${def.svg}</div>
+            <span class="btn-label">${def.name}</span>
+          `;
+
+          btn.addEventListener('click', (e) => {
+            sound.initContext();
+            this.handleBlockChoice(def.id, btn);
+          });
+
+          this.choicesContainerEl.appendChild(btn);
+        });
+      }
+
+      getCurrentLevelData() {
+        return LEVELS[this.currentLevelIndex];
+      }
+
+      loadLevel(levelIndex) {
+        this.currentLevelIndex = levelIndex;
+        this.playerPlaced = [];
+        this.isLevelTransitioning = false;
+
+        this.levelNumEl.textContent = (levelIndex + 1);
+        const lvl = this.getCurrentLevelData();
+
+        this.instructionTextEl.innerHTML = `Level ${lvl.level}: Pasang balok dari <b>PALING BAWAH (Tingkat 1)</b> ke atas!`;
+
+        this.renderTargetTower();
+        this.renderPlayerTower();
+      }
+
+      resetCurrentLevel() {
+        this.playerPlaced = [];
+        this.renderPlayerTower();
+        this.updateTargetGuide();
+      }
+
+      renderTargetTower() {
+        this.targetTowerEl.innerHTML = '';
+        const lvl = this.getCurrentLevelData();
+
+        // lvl.sequence[0] is bottom block, lvl.sequence[length-1] is top block.
+        // Because of flex-direction: column-reverse in CSS, the 0-th element will appear at the bottom!
+        lvl.sequence.forEach((blockId, idx) => {
+          const def = BLOCK_DEFS[blockId];
+          const slot = document.createElement('div');
+          slot.className = 'tower-slot';
+          slot.id = `target-slot-${idx}`;
+          slot.innerHTML = def.svg;
+
+          this.targetTowerEl.appendChild(slot);
+        });
+
+        this.updateTargetGuide();
+      }
+
+      renderPlayerTower() {
+        this.playerTowerEl.innerHTML = '';
+        const lvl = this.getCurrentLevelData();
+
+        lvl.sequence.forEach((expectedBlockId, idx) => {
+          const slot = document.createElement('div');
+          slot.className = 'tower-slot';
+          slot.id = `player-slot-${idx}`;
+
+          if (idx < this.playerPlaced.length) {
+            // Already placed block
+            const placedBlockId = this.playerPlaced[idx];
+            slot.innerHTML = BLOCK_DEFS[placedBlockId].svg;
+          } else if (idx === this.playerPlaced.length) {
+            // Current expected slot
+            slot.classList.add('empty-slot', 'active-target-slot');
+            slot.innerHTML = `<span>Tingkat ${idx + 1}</span>`;
+          } else {
+            // Future slot
+            slot.classList.add('empty-slot');
+            slot.innerHTML = `<span>${idx + 1}</span>`;
+          }
+
+          this.playerTowerEl.appendChild(slot);
+        });
+
+        this.updateTargetGuide();
+      }
+
+      updateTargetGuide() {
+        // Remove existing guide badges
+        document.querySelectorAll('.target-guide').forEach(el => el.remove());
+
+        const nextStepIndex = this.playerPlaced.length;
+        const lvl = this.getCurrentLevelData();
+
+        if (nextStepIndex < lvl.sequence.length) {
+          const targetSlot = document.getElementById(`target-slot-${nextStepIndex}`);
+          if (targetSlot) {
+            const guide = document.createElement('div');
+            guide.className = 'target-guide';
+            guide.innerHTML = `👈 Pasang ini!`;
+            targetSlot.appendChild(guide);
+          }
+        }
+      }
+
+      handleBlockChoice(selectedBlockId, buttonEl) {
+        if (this.isLevelTransitioning) return;
+
+        const lvl = this.getCurrentLevelData();
+        const currentStepIndex = this.playerPlaced.length;
+        const expectedBlockId = lvl.sequence[currentStepIndex];
+
+        if (selectedBlockId === expectedBlockId) {
+          // ==============================
+          // JAWABAN BENAR!
+          // ==============================
+          sound.playCorrect(currentStepIndex);
+
+          // Masukkan balok ke tower player
+          this.playerPlaced.push(selectedBlockId);
+
+          // Trigger drop & bounce animation on slot
+          const targetSlot = document.getElementById(`player-slot-${currentStepIndex}`);
+          if (targetSlot) {
+            targetSlot.classList.remove('empty-slot', 'active-target-slot');
+            targetSlot.innerHTML = BLOCK_DEFS[selectedBlockId].svg;
+            targetSlot.classList.add('bounce-in');
+          }
+
+          // Small sparkle on slot
+          if (targetSlot) {
+            const rect = targetSlot.getBoundingClientRect();
+            confetti.burstStars(rect.left + rect.width / 2, rect.top + rect.height / 2, 8);
+          }
+
+          // Update player tower state
+          setTimeout(() => {
+            this.renderPlayerTower();
+            this.checkLevelCompletion();
+          }, 350);
+
+        } else {
+          // ==============================
+          // JAWABAN SALAH!
+          // ==============================
+          sound.playWrong();
+
+          // Goyangkan tombol yang salah (shake animation)
+          buttonEl.classList.remove('shake-animation');
+          void buttonEl.offsetWidth; // trigger reflow
+          buttonEl.classList.add('shake-animation');
+
+          setTimeout(() => {
+            buttonEl.classList.remove('shake-animation');
+          }, 450);
+        }
+      }
+
+      checkLevelCompletion() {
+        const lvl = this.getCurrentLevelData();
+        if (this.playerPlaced.length === lvl.sequence.length) {
+          // Level Selesai!
+          this.isLevelTransitioning = true;
+
+          // Sound & confetti perayaan
+          sound.playLevelComplete();
+          confetti.burstStars(window.innerWidth / 2, window.innerHeight / 2, 45);
+
+          // Tampilkan perayaan toast
+          this.showLevelToast();
+
+          // Pindah ke level berikutnya atau layar kemenangan
+          setTimeout(() => {
+            this.hideLevelToast();
+
+            if (this.currentLevelIndex < LEVELS.length - 1) {
+              // Pindah ke level selanjutnya (Level 2 atau Level 3)
+              this.loadLevel(this.currentLevelIndex + 1);
+            } else {
+              // Selesai Level 3: Tampilkan Layar Kemenangan Akhir!
+              this.showVictoryModal();
+            }
+          }, 1800);
+        }
+      }
+
+      showLevelToast() {
+        const lvl = this.getCurrentLevelData();
+        const toastTitle = document.getElementById('toast-title');
+        const toastDesc = document.getElementById('toast-desc');
+
+        if (this.currentLevelIndex === 0) {
+          toastTitle.textContent = "Bagus Sekali! 🌟";
+          toastDesc.textContent = "Menara Level 1 Berhasil Disusun!";
+        } else if (this.currentLevelIndex === 1) {
+          toastTitle.textContent = "Hebat Sekali! 🎉";
+          toastDesc.textContent = "Menara Level 2 Berhasil Disusun!";
+        } else {
+          toastTitle.textContent = "Luar Biasa! 👑";
+          toastDesc.textContent = "Menara Terakhir Sempurna!";
+        }
+
+        this.levelToastEl.classList.add('show');
+      }
+
+      hideLevelToast() {
+        this.levelToastEl.classList.remove('show');
+      }
+
+      showVictoryModal() {
+        sound.playGameVictory();
+        confetti.burstStars(window.innerWidth / 2, window.innerHeight / 2 - 100, 60);
+
+        // Burst extra confetti after delay
+        setTimeout(() => {
+          confetti.burstStars(window.innerWidth * 0.3, window.innerHeight * 0.4, 40);
+        }, 500);
+        setTimeout(() => {
+          confetti.burstStars(window.innerWidth * 0.7, window.innerHeight * 0.4, 40);
+        }, 900);
+
+        this.victoryModalEl.classList.add('show');
+      }
+    }
+
+    // Jalankan game saat DOM siap
+    document.addEventListener('DOMContentLoaded', () => {
+      new TowerGame();
+    });
+  </script>
+</body>
+</html>

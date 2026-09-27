@@ -1,0 +1,827 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Ikan Menari di Laut - Pola Arah & Orientasi (PAUD)</title>
+  <style>
+    /* Reset & Variabel */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+      -webkit-user-select: none;
+      touch-action: manipulation;
+    }
+
+    body {
+      font-family: 'Comic Sans MS', 'Fredoka', 'Quicksand', 'Nunito', system-ui, sans-serif;
+      background: linear-gradient(180deg, #1fa2ff 0%, #12d8fa 50%, #0869a6 100%);
+      min-height: 100vh;
+      overflow-x: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      color: #ffffff;
+      position: relative;
+    }
+
+    /* Efek Gelembung Melayang Latar Belakang */
+    .bg-bubble {
+      position: absolute;
+      background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.1));
+      border-radius: 50%;
+      pointer-events: none;
+      animation: floatUp 8s linear infinite;
+      box-shadow: inset 0 0 10px rgba(255, 255, 255, 0.5);
+    }
+
+    @keyframes floatUp {
+      0% {
+        transform: translateY(105vh) scale(0.6);
+        opacity: 0;
+      }
+      20% {
+        opacity: 0.8;
+      }
+      80% {
+        opacity: 0.8;
+      }
+      100% {
+        transform: translateY(-10vh) scale(1.1);
+        opacity: 0;
+      }
+    }
+
+    /* Header Navigasi Ramah Anak */
+    header {
+      padding: 16px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: relative;
+      z-index: 10;
+    }
+
+    .level-badge {
+      background: #ffb703;
+      color: #023047;
+      font-size: 1.25rem;
+      font-weight: 800;
+      padding: 8px 18px;
+      border-radius: 999px;
+      border: 3px solid #ffffff;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      letter-spacing: 0.5px;
+    }
+
+    .header-title {
+      font-size: 1.6rem;
+      font-weight: 800;
+      color: #ffffff;
+      text-shadow: 0 3px 6px rgba(0, 48, 73, 0.4);
+      text-align: center;
+    }
+
+    .btn-sound {
+      background: #ffffff;
+      color: #023047;
+      border: 3px solid #ffb703;
+      border-radius: 50%;
+      width: 48px;
+      height: 48px;
+      font-size: 1.3rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+      transition: transform 0.15s;
+    }
+    .btn-sound:active {
+      transform: scale(0.9);
+    }
+
+    /* Area Utama Permainan */
+    main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 10px 16px;
+      position: relative;
+      z-index: 10;
+      width: 100%;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .instruksi-box {
+      background: rgba(255, 255, 255, 0.92);
+      color: #023047;
+      padding: 10px 24px;
+      border-radius: 24px;
+      font-size: 1.2rem;
+      font-weight: 700;
+      text-align: center;
+      margin-bottom: 24px;
+      box-shadow: 0 6px 16px rgba(0, 30, 60, 0.2);
+      border: 3px solid #38bdf8;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* Barisan Gelembung Ikan */
+    .fish-track-container {
+      width: 100%;
+      overflow-x: auto;
+      padding: 15px 5px;
+      display: flex;
+      justify-content: center;
+    }
+
+    .fish-track {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      flex-wrap: nowrap;
+    }
+
+    /* Gelembung Satuan */
+    .bubble-slot {
+      width: 90px;
+      height: 90px;
+      min-width: 90px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 35% 35%, rgba(255, 255, 255, 0.85) 0%, rgba(186, 230, 253, 0.45) 50%, rgba(56, 189, 248, 0.3) 100%);
+      border: 3px solid rgba(255, 255, 255, 0.9);
+      box-shadow: 0 8px 20px rgba(3, 105, 161, 0.25), inset 0 -4px 10px rgba(14, 165, 233, 0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      transition: transform 0.3s ease;
+    }
+
+    @media (min-width: 640px) {
+      .bubble-slot {
+        width: 110px;
+        height: 110px;
+        min-width: 110px;
+        gap: 18px;
+      }
+    }
+
+    /* Slot Tanda Tanya Aktif */
+    .bubble-slot.target-slot {
+      border: 3.5px dashed #ffb703;
+      background: radial-gradient(circle at 35% 35%, rgba(254, 240, 138, 0.8) 0%, rgba(253, 224, 71, 0.35) 60%, rgba(245, 158, 11, 0.2) 100%);
+      animation: pulseTarget 1.5s ease-in-out infinite;
+      box-shadow: 0 0 20px rgba(250, 204, 21, 0.6), inset 0 0 10px rgba(255, 255, 255, 0.6);
+    }
+
+    @keyframes pulseTarget {
+      0%, 100% {
+        transform: scale(1);
+        border-color: #ffb703;
+      }
+      50% {
+        transform: scale(1.08);
+        border-color: #fb8500;
+      }
+    }
+
+    .question-mark {
+      font-size: 2.8rem;
+      font-weight: 900;
+      color: #fb8500;
+      text-shadow: 0 2px 4px rgba(255, 255, 255, 0.8);
+      animation: bounceQ 1s infinite alternate;
+    }
+
+    @keyframes bounceQ {
+      from { transform: translateY(2px); }
+      to { transform: translateY(-4px); }
+    }
+
+    /* SVG Ikan */
+    .fish-svg {
+      width: 78%;
+      height: 78%;
+      transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+      filter: drop-shadow(0 4px 6px rgba(0, 48, 73, 0.2));
+    }
+
+    /* Orientasi Ikan: SVG asli menghadap KIRI */
+    .facing-left {
+      transform: scaleX(1);
+    }
+
+    /* Membalik arah ke KANAN */
+    .facing-right {
+      transform: scaleX(-1);
+    }
+
+    /* Animasi Tarian Melompat (Bounce Dance Saat Benar) */
+    .dance-bounce {
+      animation: fishDance 0.6s ease-in-out infinite alternate !important;
+    }
+
+    @keyframes fishDance {
+      0% {
+        transform: translateY(0) scale(1) rotate(0deg);
+      }
+      100% {
+        transform: translateY(-22px) scale(1.12) rotate(6deg);
+      }
+    }
+
+    /* Animasi Salah (Shake / Bergoyang) */
+    .shake-bubble {
+      animation: shakeAnim 0.45s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+    }
+
+    @keyframes shakeAnim {
+      10%, 90% { transform: translate3d(-4px, 0, 0) scale(1.02); }
+      20%, 80% { transform: translate3d(6px, 0, 0); }
+      30%, 50%, 70% { transform: translate3d(-6px, 0, 0); }
+      40%, 60% { transform: translate3d(6px, 0, 0); }
+    }
+
+    /* Bagian Kontrol Tombol Pilihan di Bawah */
+    .controls-container {
+      width: 100%;
+      max-width: 600px;
+      margin: 16px auto 24px;
+      padding: 0 16px;
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      position: relative;
+      z-index: 20;
+    }
+
+    .choice-btn {
+      flex: 1;
+      min-height: 96px;
+      height: 100px;
+      background: #ffffff;
+      border: 4px solid #0284c7;
+      border-radius: 28px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      cursor: pointer;
+      box-shadow: 0 10px 0 #0369a1, 0 14px 20px rgba(0, 0, 0, 0.25);
+      transition: transform 0.1s, box-shadow 0.1s;
+      outline: none;
+      padding: 8px 12px;
+    }
+
+    .choice-btn:active {
+      transform: translateY(6px);
+      box-shadow: 0 4px 0 #0369a1, 0 6px 12px rgba(0, 0, 0, 0.2);
+    }
+
+    .btn-fish-icon {
+      width: 58px;
+      height: 38px;
+    }
+
+    .btn-label {
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: #0369a1;
+      letter-spacing: 0.5px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    /* Footer Dekorasi Rumput Laut & Bintang Laut */
+    .sea-floor {
+      width: 100%;
+      height: 48px;
+      background: #e0a96d;
+      border-top: 6px solid #cca360;
+      position: relative;
+      display: flex;
+      justify-content: space-around;
+      align-items: flex-end;
+      overflow: hidden;
+    }
+
+    .seaweed {
+      width: 20px;
+      height: 40px;
+      background: #10b981;
+      border-radius: 20px 20px 0 0;
+      transform-origin: bottom center;
+      animation: waveSeaweed 3s ease-in-out infinite alternate;
+    }
+
+    .seaweed:nth-child(2) {
+      height: 30px;
+      background: #059669;
+      animation-delay: -1s;
+    }
+
+    .seaweed:nth-child(3) {
+      height: 45px;
+      background: #34d399;
+      animation-delay: -2s;
+    }
+
+    @keyframes waveSeaweed {
+      0% { transform: rotate(-10deg); }
+      100% { transform: rotate(10deg); }
+    }
+
+    /* Modal / Layar Menang */
+    .victory-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(2, 48, 71, 0.85);
+      backdrop-filter: blur(4px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+      padding: 20px;
+    }
+
+    .victory-card {
+      background: #ffffff;
+      border-radius: 36px;
+      padding: 32px 24px;
+      max-width: 440px;
+      width: 100%;
+      text-align: center;
+      border: 6px solid #ffb703;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+      animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    @keyframes popIn {
+      from { transform: scale(0.6); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+
+    .victory-title {
+      font-size: 2rem;
+      font-weight: 900;
+      color: #fb8500;
+      margin-bottom: 12px;
+      line-height: 1.2;
+    }
+
+    .victory-desc {
+      font-size: 1.2rem;
+      color: #023047;
+      font-weight: 700;
+      margin-bottom: 24px;
+    }
+
+    .btn-replay {
+      background: #10b981;
+      color: #ffffff;
+      font-size: 1.4rem;
+      font-weight: 800;
+      padding: 16px 36px;
+      border: none;
+      border-radius: 999px;
+      cursor: pointer;
+      box-shadow: 0 8px 0 #047857, 0 12px 20px rgba(0, 0, 0, 0.2);
+      transition: transform 0.1s;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .btn-replay:active {
+      transform: translateY(4px);
+      box-shadow: 0 4px 0 #047857;
+    }
+
+    /* Peringatan Kerapian Mobile */
+    @media (max-width: 480px) {
+      .header-title { font-size: 1.25rem; }
+      .instruksi-box { font-size: 1rem; padding: 8px 16px; }
+      .bubble-slot { width: 62px; height: 62px; min-width: 62px; }
+      .question-mark { font-size: 2rem; }
+      .choice-btn { height: 90px; min-height: 90px; }
+      .btn-label { font-size: 1.05rem; }
+      .btn-fish-icon { width: 44px; height: 28px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Gelembung Latar Belakang Acak -->
+  <div id="bubble-bg"></div>
+
+  <!-- Header -->
+  <header>
+    <div class="level-badge" id="level-display">Level 1 / 3</div>
+    <div class="header-title">Ikan Menari di Laut</div>
+    <button class="btn-sound" id="btn-sound" title="Suara Musik" aria-label="Suara Musik">🔊</button>
+  </header>
+
+  <!-- Area Tengah / Main Game -->
+  <main>
+    <div class="instruksi-box" id="instruction-text">
+      <span>🐠</span>
+      <span>Ayo tebak! Ikan berikutnya menghadap ke mana?</span>
+    </div>
+
+    <!-- Barisan Gelembung Ikan -->
+    <div class="fish-track-container">
+      <div class="fish-track" id="fish-track">
+        <!-- Slot diisi secara dinamis oleh JavaScript -->
+      </div>
+    </div>
+  </main>
+
+  <!-- Tombol Pilihan Arah di Bagian Bawah Layar (Ukuran Besar >= 90px) -->
+  <div class="controls-container">
+    <button class="choice-btn" id="btn-left" onclick="handleChoice('left')" aria-label="Ikan Menghadap Kiri">
+      <svg class="btn-fish-icon facing-left" viewBox="0 0 100 65">
+        <use href="#fish-template"></use>
+      </svg>
+      <span class="btn-label">⬅️ KIRI</span>
+    </button>
+
+    <button class="choice-btn" id="btn-right" onclick="handleChoice('right')" aria-label="Ikan Menghadap Kanan">
+      <svg class="btn-fish-icon facing-right" viewBox="0 0 100 65">
+        <use href="#fish-template"></use>
+      </svg>
+      <span class="btn-label">KANAN ➡️</span>
+    </button>
+  </div>
+
+  <!-- Dasar Laut -->
+  <div class="sea-floor">
+    <div class="seaweed"></div>
+    <div class="seaweed"></div>
+    <div class="seaweed"></div>
+    <div class="seaweed"></div>
+    <div class="seaweed"></div>
+    <div class="seaweed"></div>
+  </div>
+
+  <!-- Layar Kemenangan / Selesai -->
+  <div class="victory-overlay" id="victory-modal">
+    <div class="victory-card">
+      <div style="font-size: 3.5rem; margin-bottom: 8px;">🎉🐠✨</div>
+      <div class="victory-title">Hore! Tarian Bawah Laut Selesai!</div>
+      <div class="victory-desc">Hebat sekali! Semua ikan sudah menari bersama dengan gembira! 🌊</div>
+      <button class="btn-replay" onclick="restartGame()">
+        <span>🔄</span>
+        <span>Main Lagi</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Definisi Simbol SVG Ikan Kartun Lucu (Orientasi Asli Menghadap KIRI) -->
+  <svg style="display: none;">
+    <defs>
+      <g id="fish-template">
+        <!-- Ekor Ikan -->
+        <path d="M72,32 L95,15 C98,28 98,37 95,50 Z" fill="#ff7a00" stroke="#d45700" stroke-width="2.5" stroke-linejoin="round" />
+        <path d="M74,32 L92,20 C94,28 94,36 92,45 Z" fill="#ffd166" opacity="0.6" />
+        <!-- Sirip Atas (Dorsal) -->
+        <path d="M38,18 C46,6 64,8 70,22 Z" fill="#ff7a00" stroke="#d45700" stroke-width="2.5" stroke-linejoin="round" />
+        <!-- Tubuh Utama Ikan (Menghadap Kiri) -->
+        <ellipse cx="46" cy="33" rx="34" ry="22" fill="#ff9f1c" stroke="#d45700" stroke-width="3" />
+        <!-- Garis / Belang Putih Ikan Nemo -->
+        <path d="M36,12 C40,24 40,42 36,54 C31,51 28,43 28,33 C28,23 31,15 36,12 Z" fill="#ffffff" stroke="#e0e0e0" stroke-width="1.5" />
+        <path d="M56,12 C60,24 60,42 56,54 C52,52 50,44 50,33 C50,22 52,14 56,12 Z" fill="#ffffff" stroke="#e0e0e0" stroke-width="1.5" />
+        <!-- Sirip Dada -->
+        <path d="M48,34 C58,35 62,44 54,47 Z" fill="#ff7a00" stroke="#d45700" stroke-width="2" />
+        <!-- Mata Lucu Besar Kartun -->
+        <circle cx="25" cy="27" r="8" fill="#ffffff" stroke="#333333" stroke-width="1.5" />
+        <circle cx="23" cy="27" r="4.5" fill="#1e293b" />
+        <circle cx="21.5" cy="25" r="2" fill="#ffffff" />
+        <!-- Senyum Ikan -->
+        <path d="M15,36 Q22,42 27,37" fill="none" stroke="#b91c1c" stroke-width="2.5" stroke-linecap="round" />
+        <!-- Rona Pipi Manis -->
+        <circle cx="26" cy="35" r="3.5" fill="#f43f5e" opacity="0.5" />
+      </g>
+    </defs>
+  </svg>
+
+  <script>
+    // ==========================================
+    // 1. DATA LEVEL SESUAI SPESIFIKASI
+    // ==========================================
+    const LEVELS = [
+      {
+        id: 1,
+        title: "Pola AB",
+        // Level 1: [Kiri] - [Kanan] - [Kiri] - [Kanan] - [ ? ] -> Jawaban: Kiri
+        sequence: ['left', 'right', 'left', 'right'],
+        answer: 'left'
+      },
+      {
+        id: 2,
+        title: "Pola AAB",
+        // Level 2: [Kiri] - [Kiri] - [Kanan] - [Kiri] - [Kiri] - [ ? ] -> Jawaban: Kanan
+        sequence: ['left', 'left', 'right', 'left', 'left'],
+        answer: 'right'
+      },
+      {
+        id: 3,
+        title: "Pola ABB",
+        // Level 3: [Kiri] - [Kanan] - [Kanan] - [Kiri] - [Kanan] - [ ? ] -> Jawaban: Kanan
+        sequence: ['left', 'right', 'right', 'left', 'right'],
+        answer: 'right'
+      }
+    ];
+
+    let currentLevelIndex = 0;
+    let isProcessing = false;
+    let soundEnabled = true;
+
+    // ==========================================
+    // 2. SISTEM SUARA SINTETIS WEB AUDIO API
+    // ==========================================
+    let audioCtx = null;
+
+    function getAudioContext() {
+      if (!audioCtx) {
+        const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+        audioCtx = new AudioContextClass();
+      }
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+      return audioCtx;
+    }
+
+    // Suara Gelembung Air Meletup (Bubble Pop)
+    function playBubbleSound() {
+      if (!soundEnabled) return;
+      try {
+        const ctx = getAudioContext();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+
+        const startTime = ctx.currentTime;
+        osc.type = 'sine';
+        // Frekuensi melesat cepat ke atas seperti gelembung "blup!"
+        osc.frequency.setValueAtTime(320, startTime);
+        osc.frequency.exponentialRampToValueAtTime(880, startTime + 0.12);
+
+        gain.gain.setValueAtTime(0.3, startTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, startTime + 0.14);
+
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+
+        osc.start(startTime);
+        osc.stop(startTime + 0.15);
+      } catch (e) {
+        console.warn('Audio error:', e);
+      }
+    }
+
+    // Suara Benar (Melodi Ceria Anak)
+    function playSuccessSound() {
+      if (!soundEnabled) return;
+      try {
+        const ctx = getAudioContext();
+        const notes = [523.25, 659.25, 783.99, 1046.50]; // C5, E5, G5, C6
+        notes.forEach((freq, idx) => {
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          const startTime = ctx.currentTime + (idx * 0.1);
+
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(freq, startTime);
+
+          gain.gain.setValueAtTime(0, startTime);
+          gain.gain.linearRampToValueAtTime(0.35, startTime + 0.02);
+          gain.gain.exponentialRampToValueAtTime(0.001, startTime + 0.35);
+
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+
+          osc.start(startTime);
+          osc.stop(startTime + 0.36);
+        });
+      } catch (e) {
+        console.warn('Audio error:', e);
+      }
+    }
+
+    // Suara Salah (Nada Rendah Lembut / Boing yang Ramah & Tanpa Menakuti Anak)
+    function playGentleShakeSound() {
+      if (!soundEnabled) return;
+      try {
+        const ctx = getAudioContext();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+
+        const startTime = ctx.currentTime;
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(190, startTime);
+        osc.frequency.exponentialRampToValueAtTime(140, startTime + 0.25);
+
+        gain.gain.setValueAtTime(0.3, startTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, startTime + 0.28);
+
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+
+        osc.start(startTime);
+        osc.stop(startTime + 0.3);
+      } catch (e) {
+        console.warn('Audio error:', e);
+      }
+    }
+
+    // Suara Kemenangan Akhir
+    function playVictoryFanfare() {
+      if (!soundEnabled) return;
+      try {
+        const ctx = getAudioContext();
+        const fanfare = [523.25, 659.25, 783.99, 1046.50, 1318.51];
+        fanfare.forEach((freq, idx) => {
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          const startTime = ctx.currentTime + (idx * 0.12);
+
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(freq, startTime);
+
+          gain.gain.setValueAtTime(0, startTime);
+          gain.gain.linearRampToValueAtTime(0.4, startTime + 0.03);
+          gain.gain.exponentialRampToValueAtTime(0.001, startTime + 0.5);
+
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+
+          osc.start(startTime);
+          osc.stop(startTime + 0.52);
+        });
+      } catch (e) {
+        console.warn('Audio error:', e);
+      }
+    }
+
+    // ==========================================
+    // 3. RENDER GAME & LOGIKA LEVEL
+    // ==========================================
+    const fishTrackEl = document.getElementById('fish-track');
+    const levelDisplayEl = document.getElementById('level-display');
+    const instructionEl = document.getElementById('instruction-text');
+    const victoryModalEl = document.getElementById('victory-modal');
+    const btnSoundEl = document.getElementById('btn-sound');
+
+    function renderLevel() {
+      const currentLevel = LEVELS[currentLevelIndex];
+      levelDisplayEl.textContent = `Level ${currentLevel.id} / ${LEVELS.length}`;
+      instructionEl.innerHTML = `<span>🐠</span><span>Ayo tebak! Ikan ke-${currentLevel.sequence.length + 1} menghadap ke mana?</span>`;
+      
+      fishTrackEl.innerHTML = '';
+
+      // Tampilkan ikan-ikan sebelumnya
+      currentLevel.sequence.forEach((direction, index) => {
+        const bubble = document.createElement('div');
+        bubble.className = 'bubble-slot';
+        bubble.setAttribute('data-index', index);
+
+        // Ikan dengan orientasi: scaleX(1) jika left, scaleX(-1) jika right
+        const facingClass = direction === 'left' ? 'facing-left' : 'facing-right';
+
+        bubble.innerHTML = `
+          <svg class="fish-svg ${facingClass}" viewBox="0 0 100 65">
+            <use href="#fish-template"></use>
+          </svg>
+        `;
+        fishTrackEl.appendChild(bubble);
+      });
+
+      // Tampilkan gelembung ke-5 (atau slot target tanda tanya [ ? ])
+      const targetBubble = document.createElement('div');
+      targetBubble.className = 'bubble-slot target-slot';
+      targetBubble.id = 'target-bubble';
+      targetBubble.innerHTML = `<span class="question-mark">?</span>`;
+      fishTrackEl.appendChild(targetBubble);
+
+      isProcessing = false;
+    }
+
+    // ==========================================
+    // 4. PENANGANAN JAWABAN (INTERAKSI & FEEDBACK)
+    // ==========================================
+    function handleChoice(chosenDirection) {
+      if (isProcessing) return;
+
+      // Inisialisasi audio jika belum aktif
+      getAudioContext();
+
+      const currentLevel = LEVELS[currentLevelIndex];
+      const targetBubble = document.getElementById('target-bubble');
+
+      if (chosenDirection === currentLevel.answer) {
+        // --- JAWABAN BENAR ---
+        isProcessing = true;
+        playBubbleSound();
+        playSuccessSound();
+
+        // 1. Masukkan ikan ke dalam gelembung target
+        targetBubble.classList.remove('target-slot');
+        const facingClass = chosenDirection === 'left' ? 'facing-left' : 'facing-right';
+        targetBubble.innerHTML = `
+          <svg class="fish-svg ${facingClass}" viewBox="0 0 100 65">
+            <use href="#fish-template"></use>
+          </svg>
+        `;
+
+        // Ubah teks instruksi gembira
+        instructionEl.innerHTML = `<span>🎉</span><span style="color:#059669;">Hebat! Ikan menari gembira!</span>`;
+
+        // 2. Seluruh barisan ikan melakukan animasi melompat/menari (bounce dance)
+        const allFishSvgs = fishTrackEl.querySelectorAll('.fish-svg');
+        allFishSvgs.forEach((fish, i) => {
+          fish.classList.add('dance-bounce');
+          fish.style.animationDelay = `${(i * 0.1)}s`;
+        });
+
+        // 3. Pindah ke level berikutnya setelah 1.5 detik
+        setTimeout(() => {
+          if (currentLevelIndex < LEVELS.length - 1) {
+            currentLevelIndex++;
+            renderLevel();
+          } else {
+            // Selesai seluruh level -> Tampilkan Layar Kemenangan
+            showVictoryScreen();
+          }
+        }, 1500);
+
+      } else {
+        // --- JAWABAN SALAH ---
+        // Gelembung bergetar/shake tanpa penalti skor
+        playGentleShakeSound();
+        targetBubble.classList.add('shake-bubble');
+        instructionEl.innerHTML = `<span>🌊</span><span style="color:#e11d48;">Hampir benar! Coba tombol yang satunya lagi ya~</span>`;
+
+        setTimeout(() => {
+          targetBubble.classList.remove('shake-bubble');
+        }, 500);
+      }
+    }
+
+    // Tampilkan Layar Kemenangan
+    function showVictoryScreen() {
+      playVictoryFanfare();
+      victoryModalEl.style.display = 'flex';
+    }
+
+    // Ulangi Permainan
+    function restartGame() {
+      victoryModalEl.style.display = 'none';
+      currentLevelIndex = 0;
+      renderLevel();
+    }
+
+    // Kontrol Suara Mute / Unmute
+    btnSoundEl.addEventListener('click', () => {
+      soundEnabled = !soundEnabled;
+      btnSoundEl.textContent = soundEnabled ? '🔊' : '🔇';
+    });
+
+    // Inisialisasi gelembung latar belakang mengapung
+    function initFloatingBubbles() {
+      const container = document.getElementById('bubble-bg');
+      for (let i = 0; i < 15; i++) {
+        const bubble = document.createElement('div');
+        bubble.className = 'bg-bubble';
+        const size = Math.random() * 40 + 15;
+        bubble.style.width = `${size}px`;
+        bubble.style.height = `${size}px`;
+        bubble.style.left = `${Math.random() * 95}vw`;
+        bubble.style.animationDuration = `${Math.random() * 5 + 6}s`;
+        bubble.style.animationDelay = `${Math.random() * 5}s`;
+        container.appendChild(bubble);
+      }
+    }
+
+    // Mulai saat halaman dimuat
+    window.addEventListener('DOMContentLoaded', () => {
+      initFloatingBubbles();
+      renderLevel();
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,6 @@
+{
+  "name": "Ulat Warna-Warni - Game Pola Visual PAUD",
+  "description": "Game edukasi interaktif melatih pola visual warna untuk anak usia PAUD dan TK dengan tema Ulat Warna-Warni.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
